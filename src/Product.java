@@ -4,6 +4,8 @@ public class Product {
 	int id;
 	double price;
 	int quantity;
+	boolean clearance = false;
+	
 	
 	//  Constructors
 	Product(String name_input) { name = name_input; }
