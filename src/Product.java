@@ -1,10 +1,10 @@
 
 public class Product {
 	String name;
-	int id;
-	double price;
-	int quantity;
-	boolean clearance = false;
+	private int id;
+	private double price;
+	private int quantity;
+	private boolean clearance = false;
 	
 	
 	//  Constructors

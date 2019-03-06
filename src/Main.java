@@ -1,6 +1,15 @@
 import java.util.*;
 
+
 public class Main {
+	
+	public static void printInfo(Product printObject){
+		System.out.println(printObject.getID()+". "+printObject.getName());
+		System.out.println("Price: $"+printObject.getPrice());
+		System.out.println("Quantity: "+printObject.getQuantity());
+	}
+	
+	
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		
@@ -59,11 +68,51 @@ public class Main {
 					endProgram = true;
 					break;
 				case 1:
-					//for (Product temp : list) {
+					
+					System.out.println("Enter an item ID or name to search information about it.");
+					System.out.println("There are "+list.size()+" items in the inventory.");
+					String search = scanner.next();
+					
+					try {
+						int searchID = Integer.parseInt(search);
+						boolean productFound = false;
+						for (Product temp : list) {
+							if (temp.getID() == searchID) {
+								productFound = true;
+								System.out.println("Product found!");
+								printInfo(temp);
+								System.out.println("Press enter to continue");
+								scanner.nextLine();
+								break;
+							}
+						}
+						if (productFound == false) {
+							System.out.println("Product ID not found in inventory. Press enter to go back to the menu.");
+							scanner.nextLine();
+						}
+						scanner.nextLine();
+						continue;
+					}
+					catch(Exception e) {
+						boolean productFound = false;
+						for (Product temp : list) {
+							if (temp.getName().equals(search)) {
+								productFound = true;
+								System.out.println("Product found!");
+								printInfo(temp);
+								System.out.println("Press enter to continue");
+								scanner.nextLine();
+								continue;
+							}
+						}
+						if (productFound == false) {
+							System.out.println("Product not found in inventory. Press enter to go back to the menu.");
+							scanner.nextLine();
+						}
+						scanner.nextLine();
+						continue;
 						
-						//System.out.println(temp);
-					//}
-					break;
+					}
 				case 2:
 					
 					break;
