@@ -5,6 +5,7 @@ public class Product {
 	private double price;
 	private int quantity;
 	private boolean clearance = false;
+	private double clearancePrice;
 	
 	
 	//  Constructors
@@ -20,11 +21,26 @@ public class Product {
 	public void setID(int id_input) { id = id_input; }
 	public void setPrice(int price_input) { price = price_input; }
 	public void setQuantity(int quantity_input) { quantity = quantity_input; }
+	public void setClearance(double newPrice) {
+		clearance = true;
+		clearancePrice = newPrice;
+	}
+	public void removeClearance() {
+		clearance = false;
+	}
+	public void printInfo() {
+		System.out.println(this.getID()+". "+this.getName());
+		System.out.println("Price: $"+this.getPrice());
+		System.out.println("Quantity: "+this.getQuantity());
+	}
 	
 	//  Accessors
 	public String getName() { return name; }
 	public int getID() { return id; }
-	public double getPrice() { return price; }
+	public double getPrice() {
+		if (clearance == true) { return clearancePrice; }
+		else { return price; }
+	}
 	public int getQuantity() { return quantity; }
 	
 	

@@ -3,16 +3,34 @@ import java.util.*;
 
 public class Main {
 	
-	public static void printInfo(Product printObject){
-		System.out.println(printObject.getID()+". "+printObject.getName());
-		System.out.println("Price: $"+printObject.getPrice());
-		System.out.println("Quantity: "+printObject.getQuantity());
+	//Searching list for specific object
+	public static Optional<Product> fetchItem(List<Product> list, String search) {
+		try {
+			int searchID = Integer.parseInt(search);
+			for (Product temp : list) {
+				if (temp.getID() == searchID) {
+					return Optional.of(temp);
+				}
+			}
+			return Optional.empty();
+		}
+		catch(Exception e) {
+			for (Product temp : list) {
+				if (temp.getName().equals(search)) {
+					return Optional.of(temp);
+				}
+			}
+			return Optional.empty();
+		}
 	}
 	
 	
+	
 	public static void main(String[] args) {
+		
 		Scanner scanner = new Scanner(System.in);
 		
+		// Initial loading screen
 		System.out.println("Enter a selection number: ");
 		System.out.println("1. Load inventory from file");
 		System.out.println("2. Create a blank inventory");
@@ -63,16 +81,21 @@ public class Main {
 				input = scanner.nextInt();
 				
 				switch(input) {
-				case 0:
+				case 0: // Exit the program
 					System.out.println("Program ended.");
 					endProgram = true;
 					break;
-				case 1:
+				case 1: // Search inventory for item
 					
 					System.out.println("Enter an item ID or name to search information about it.");
 					System.out.println("There are "+list.size()+" items in the inventory.");
 					String search = scanner.next();
 					
+					Optional<Product> asdf = fetchItem(list,search);
+					asdf.ifPresent(a -> a.printInfo());
+					
+					break;
+					/*
 					try {
 						int searchID = Integer.parseInt(search);
 						boolean productFound = false;
@@ -80,7 +103,7 @@ public class Main {
 							if (temp.getID() == searchID) {
 								productFound = true;
 								System.out.println("Product found!");
-								printInfo(temp);
+								temp.printInfo();
 								System.out.println("Press enter to continue");
 								scanner.nextLine();
 								break;
@@ -99,7 +122,7 @@ public class Main {
 							if (temp.getName().equals(search)) {
 								productFound = true;
 								System.out.println("Product found!");
-								printInfo(temp);
+								temp.printInfo();
 								System.out.println("Press enter to continue");
 								scanner.nextLine();
 								continue;
@@ -112,20 +135,20 @@ public class Main {
 						scanner.nextLine();
 						continue;
 						
-					}
-				case 2:
+					}*/
+				case 2: // Add item quantity
 					
 					break;
-				case 3: 
+				case 3: // Remove item quantity
 					
 					break;
-				case 4: 
+				case 4: // Checkout item list from .txt file
 					
 					break;
-				case 5:
+				case 5: // Add/remove clearance price from item
 					
 					break;
-				case 6:
+				case 6: // Print list of items on sale
 					
 					break;
 				default:
