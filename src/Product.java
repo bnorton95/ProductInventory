@@ -37,6 +37,7 @@ public class Product {
 	//  Accessors
 	public String getName() { return name; }
 	public int getID() { return id; }
+	public boolean getClearance() { return clearance; }
 	public double getPrice() {
 		if (clearance == true) { return clearancePrice; }
 		else { return price; }

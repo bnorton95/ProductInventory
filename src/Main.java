@@ -26,6 +26,7 @@ public class Main {
 	
 	
 	
+	
 	public static void main(String[] args) {
 		
 		Scanner scanner = new Scanner(System.in);
@@ -86,59 +87,61 @@ public class Main {
 					endProgram = true;
 					break;
 				case 1: // Search inventory for item
-					
+					System.out.println("There are "+list.size()+" unique items in the inventory.");
 					System.out.println("Enter an item ID or name to search information about it.");
-					System.out.println("There are "+list.size()+" items in the inventory.");
 					String search = scanner.next();
 					
-					Optional<Product> asdf = fetchItem(list,search);
-					asdf.ifPresent(a -> a.printInfo());
+					Optional<Product> item = fetchItem(list,search);
 					
-					break;
-					/*
-					try {
-						int searchID = Integer.parseInt(search);
-						boolean productFound = false;
-						for (Product temp : list) {
-							if (temp.getID() == searchID) {
-								productFound = true;
-								System.out.println("Product found!");
-								temp.printInfo();
-								System.out.println("Press enter to continue");
-								scanner.nextLine();
-								break;
-							}
-						}
-						if (productFound == false) {
-							System.out.println("Product ID not found in inventory. Press enter to go back to the menu.");
-							scanner.nextLine();
-						}
-						scanner.nextLine();
-						continue;
+					item.ifPresent(o -> o.printInfo());
+					if (!item.isPresent()) {
+						System.out.println("Product not found in inventory.");
 					}
-					catch(Exception e) {
-						boolean productFound = false;
-						for (Product temp : list) {
-							if (temp.getName().equals(search)) {
-								productFound = true;
-								System.out.println("Product found!");
-								temp.printInfo();
-								System.out.println("Press enter to continue");
-								scanner.nextLine();
-								continue;
-							}
-						}
-						if (productFound == false) {
-							System.out.println("Product not found in inventory. Press enter to go back to the menu.");
-							scanner.nextLine();
-						}
-						scanner.nextLine();
-						continue;
-						
-					}*/
-				case 2: // Add item quantity
 					
-					break;
+					
+					System.out.println("Press enter to continue.");
+					scanner.nextLine();
+					scanner.nextLine();
+					continue;
+					
+				case 2: // Add item quantity
+					System.out.println("Enter an item name to add a quantity:");
+					String add = scanner.next();
+					
+					Optional<Product> itemAdd = fetchItem(list,add);
+					
+					
+					if (itemAdd.isPresent()) {
+						int asdf = scanner.nextInt();
+						while (asdf < 0) {
+							System.out.println("Enter a quantity above 0");
+							asdf = scanner.nextInt();
+						}
+						itemAdd.ifPresent(o -> o.setQuantity(o.getQuantity()+asdf));
+					}					
+					else {
+						
+						System.out.println("Product not found in inventory.");
+						System.out.println("Enter the quantity being added: ");
+						int quantity = scanner.nextInt();
+						while (quantity < 0) {
+							System.out.println("Enter a quantity above 0");
+							quantity = scanner.nextInt();
+						}
+						System.out.println("Enter the price of the item: ");
+						double price = scanner.nextDouble();
+						while (price < 0) {
+							System.out.println("Enter a price above 0");
+							price = scanner.nextDouble();
+						}
+						list.add(new Product(String(itemAdd),list.size(),price,quantity));
+					}
+					
+					
+					System.out.println("Quantity added. Press enter to continue.");
+					scanner.nextLine();
+					scanner.nextLine();
+					continue;
 				case 3: // Remove item quantity
 					
 					break;
@@ -201,5 +204,20 @@ public class Main {
 		
 		
 		scanner.close();
+	}
+
+
+
+	private static String String(Optional<Product> itemAdd) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	private static Optional<Product> ofNullable(Optional<Product> fetchItem) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
