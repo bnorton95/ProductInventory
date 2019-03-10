@@ -29,9 +29,8 @@ public class Product {
 		clearance = false;
 	}
 	public void printInfo() {
-		System.out.println(this.getID()+". "+this.getName());
-		System.out.println("Price: $"+this.getPrice());
-		System.out.println("Quantity: "+this.getQuantity());
+		System.out.println(this.getID()+". "+this.getName()
+		+":  "+this.getQuantity()+" at $"+this.getPrice());
 	}
 	
 	//  Accessors

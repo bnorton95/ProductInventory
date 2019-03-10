@@ -4,23 +4,23 @@ import java.util.*;
 public class Main {
 	
 	//Searching list for specific object
-	public static Optional<Product> fetchItem(List<Product> list, String search) {
+	public static Product fetchItem(List<Product> list, String search) {
 		try {
 			int searchID = Integer.parseInt(search);
 			for (Product temp : list) {
 				if (temp.getID() == searchID) {
-					return Optional.of(temp);
+					return temp;
 				}
 			}
-			return Optional.empty();
+			return null;
 		}
 		catch(Exception e) {
 			for (Product temp : list) {
 				if (temp.getName().equals(search)) {
-					return Optional.of(temp);
+					return temp;
 				}
 			}
-			return Optional.empty();
+			return null;
 		}
 	}
 	
@@ -76,6 +76,7 @@ public class Main {
 			System.out.println("4. Checkout item list from .txt file");
 			System.out.println("5. Add/remove clearance price from item");
 			System.out.println("6. Print list of items on sale");
+			System.out.println("7. Print full inventory");
 			System.out.println("0. Exit program");
 			
 			try {
@@ -91,10 +92,12 @@ public class Main {
 					System.out.println("Enter an item ID or name to search information about it.");
 					String search = scanner.next();
 					
-					Optional<Product> item = fetchItem(list,search);
+					Product item = fetchItem(list,search);
 					
-					item.ifPresent(o -> o.printInfo());
-					if (!item.isPresent()) {
+					if (item != null) {
+						item.printInfo();
+					}
+					else {
 						System.out.println("Product not found in inventory.");
 					}
 					
@@ -108,33 +111,44 @@ public class Main {
 					System.out.println("Enter an item name to add a quantity:");
 					String add = scanner.next();
 					
-					Optional<Product> itemAdd = fetchItem(list,add);
+					Product itemAdd = fetchItem(list,add);
 					
 					
-					if (itemAdd.isPresent()) {
-						int asdf = scanner.nextInt();
-						while (asdf < 0) {
+					if (itemAdd != null) {
+						int addQuantity = scanner.nextInt();
+						while (addQuantity < 0) {
 							System.out.println("Enter a quantity above 0");
-							asdf = scanner.nextInt();
+							addQuantity = scanner.nextInt();
 						}
-						itemAdd.ifPresent(o -> o.setQuantity(o.getQuantity()+asdf));
+						itemAdd.setQuantity(itemAdd.getQuantity()+addQuantity);
 					}					
 					else {
 						
-						System.out.println("Product not found in inventory.");
-						System.out.println("Enter the quantity being added: ");
-						int quantity = scanner.nextInt();
-						while (quantity < 0) {
-							System.out.println("Enter a quantity above 0");
-							quantity = scanner.nextInt();
+						System.out.println("Product not currently in inventory.");
+						
+						double price;
+						int quantity;
+						while (true) {
+							try {
+								System.out.println("Enter the quantity being added: ");
+								quantity = scanner.nextInt();
+								break;
+							}
+							catch(Exception e) {
+								continue;
+							}
 						}
-						System.out.println("Enter the price of the item: ");
-						double price = scanner.nextDouble();
-						while (price < 0) {
-							System.out.println("Enter a price above 0");
-							price = scanner.nextDouble();
+						while (true) {
+							try {
+								System.out.println("Enter the price of the item: ");
+								price = scanner.nextDouble();
+								break;
+							}
+							catch(Exception e) {
+								continue;
+							}
 						}
-						list.add(new Product(String(itemAdd),list.size(),price,quantity));
+						list.add(new Product(add,(list.size())+1,price,quantity));
 					}
 					
 					
@@ -152,8 +166,33 @@ public class Main {
 					
 					break;
 				case 6: // Print list of items on sale
-					
-					break;
+					boolean itemsInClearance = false;
+					for(int i = 0; i < list.size(); i++) {
+						if (list.get(i).getClearance()) {
+							list.get(i).printInfo();
+							itemsInClearance = true;
+						}
+					}
+					if (itemsInClearance == false) {
+							System.out.println("No products are on clearance.");
+					}
+					System.out.println("Press enter to continue.");
+					scanner.nextLine();
+					scanner.nextLine();
+					continue;
+				case 7: // Print all items
+					boolean itemsInList = false;
+					for(int i = 0; i < list.size(); i++) {
+						list.get(i).printInfo();
+						itemsInList = true;
+					}
+					if (itemsInList == false) {
+						System.out.println("No items are in the inventory");
+					}
+					System.out.println("Press enter to continue.");
+					scanner.nextLine();
+					scanner.nextLine();
+					continue;
 				default:
 					continue;
 				}
