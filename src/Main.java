@@ -16,12 +16,64 @@ public class Main {
 		}
 		catch(Exception e) {
 			for (Product temp : list) {
-				if (temp.getName().equals(search)) {
+				if (temp.getName().equalsIgnoreCase(search)) {
 					return temp;
 				}
 			}
 			return null;
 		}
+	}
+	
+	
+	/* This function will filter out bad user inputs.
+	 * Parameter DISPLAY is only used to print out the text of the required field
+	 * The function will return the specified user input without type errors.
+	 */
+	public static double getDoubleInput(String display, Scanner scanner) {
+		double input;
+		while (true) {
+			try {
+				System.out.println("Enter the "+display+" of the item: ");
+				input = scanner.nextDouble();
+				
+				if (input < 0) {
+					System.out.println("Enter a number above 0.");
+					continue;
+				}
+				return input;
+			}
+			catch(Exception e) {
+				scanner.next();
+				continue; }
+		}
+	}
+	
+	//This function is a duplicate in order of getDoubleInput() to get inputs of int variables
+	public static int getIntInput(String display, Scanner scanner) {
+		int input;
+		while (true) {
+			try {
+				System.out.println("Enter the "+display+" of the item: ");
+				input = scanner.nextInt();
+				if (input < 0) {
+					System.out.println("Enter a number above 0.");
+					continue;
+				}
+				return input;
+			}
+			catch(Exception e) { 
+				scanner.next();
+				continue;
+				}
+		}
+	}
+	
+	public static void pressEnter(Scanner scanner) {
+		if (scanner.hasNextLine()) {
+			scanner.nextLine();
+		}
+		System.out.print(" Press enter to continue.");
+		scanner.nextLine();
 	}
 	
 	
@@ -68,7 +120,7 @@ public class Main {
 		list.add(product4);
 		list.add(product5);
 		
-		while (!endProgram) {
+		while (!endProgram) {			
 			System.out.println("Enter a selection number: ");
 			System.out.println("1. Search inventory for item");
 			System.out.println("2. Add item quantity");
@@ -91,15 +143,10 @@ public class Main {
 					System.out.println("There are "+list.size()+" unique items in the inventory.");
 					System.out.println("Enter an item ID or name to search information about it.");
 					String search = scanner.next();
-					
 					Product item = fetchItem(list,search);
 					
-					if (item != null) {
-						item.printInfo();
-					}
-					else {
-						System.out.println("Product not found in inventory.");
-					}
+					if (item != null) {	item.printInfo(); }
+					else { System.out.println("Product not found in inventory."); }
 					
 					
 					System.out.println("Press enter to continue.");
@@ -110,60 +157,79 @@ public class Main {
 				case 2: // Add item quantity
 					System.out.println("Enter an item name to add a quantity:");
 					String add = scanner.next();
-					
 					Product itemAdd = fetchItem(list,add);
 					
 					
 					if (itemAdd != null) {
-						int addQuantity = scanner.nextInt();
-						while (addQuantity < 0) {
-							System.out.println("Enter a quantity above 0");
-							addQuantity = scanner.nextInt();
-						}
+						int addQuantity = getIntInput("quantity",scanner);
 						itemAdd.setQuantity(itemAdd.getQuantity()+addQuantity);
 					}					
 					else {
-						
 						System.out.println("Product not currently in inventory.");
-						
-						double price;
-						int quantity;
-						while (true) {
-							try {
-								System.out.println("Enter the quantity being added: ");
-								quantity = scanner.nextInt();
-								break;
-							}
-							catch(Exception e) {
-								continue;
-							}
-						}
-						while (true) {
-							try {
-								System.out.println("Enter the price of the item: ");
-								price = scanner.nextDouble();
-								break;
-							}
-							catch(Exception e) {
-								continue;
-							}
-						}
+						double price = getDoubleInput("price",scanner);
+						int quantity = getIntInput("quantity",scanner);
 						list.add(new Product(add,(list.size())+1,price,quantity));
 					}
 					
 					
-					System.out.println("Quantity added. Press enter to continue.");
-					scanner.nextLine();
-					scanner.nextLine();
+					System.out.println("Quantity added.");
+					pressEnter(scanner);
 					continue;
 				case 3: // Remove item quantity
+					System.out.println("Enter an item name to remove an amount:");
+					String remove = scanner.next();
+					Product itemRemove = fetchItem(list,remove);
 					
+					
+					if (itemRemove != null) {
+						int remQuantity = getIntInput("quantity",scanner);
+						if (remQuantity > itemRemove.getQuantity()) {
+							System.out.println("There are only "+itemRemove.getQuantity()
+							+" items in the inventory which will be removed.");
+							itemRemove.setQuantity(0);
+						}
+						else {
+							itemRemove.setQuantity(itemRemove.getQuantity()-remQuantity);
+						}
+					}					
+					else {
+						
+						System.out.println("Product not currently in inventory.");
+					}
+						
 					break;
 				case 4: // Checkout item list from .txt file
 					
 					break;
 				case 5: // Add/remove clearance price from item
+					System.out.println("Enter an item name to put on clearance:");
+					String clear = scanner.next();
+					Product itemClearance = fetchItem(list,clear);
 					
+					if (itemClearance != null) {
+						if (!itemClearance.getClearance()) {
+							while (true) {
+								double clearance = getDoubleInput("clearance",scanner);
+								if (clearance > itemClearance.getTruePrice()) {
+									System.out.println("The clearance price is greater than the original price.");
+									continue;
+								}
+								itemClearance.setClearance(clearance);
+								System.out.println(itemClearance.getName()+" set to "+itemClearance.getPrice());
+								break;
+							}	
+						}
+						else {
+							itemClearance.removeClearance();
+							System.out.println(itemClearance.getName()+" removed from clearance. Regular price: "
+									+itemClearance.getPrice());
+						}
+					}
+					else {
+						System.out.println("Item not found!");
+					}
+					
+					pressEnter(scanner);
 					break;
 				case 6: // Print list of items on sale
 					boolean itemsInClearance = false;
@@ -176,9 +242,7 @@ public class Main {
 					if (itemsInClearance == false) {
 							System.out.println("No products are on clearance.");
 					}
-					System.out.println("Press enter to continue.");
-					scanner.nextLine();
-					scanner.nextLine();
+					pressEnter(scanner);
 					continue;
 				case 7: // Print all items
 					boolean itemsInList = false;
@@ -189,14 +253,12 @@ public class Main {
 					if (itemsInList == false) {
 						System.out.println("No items are in the inventory");
 					}
-					System.out.println("Press enter to continue.");
-					scanner.nextLine();
-					scanner.nextLine();
+					pressEnter(scanner);
 					continue;
 				default:
+					System.out.println("Invalid input.");
 					continue;
 				}
-				
 			}
 			catch(Exception e) {
 				scanner.next();
@@ -243,20 +305,5 @@ public class Main {
 		
 		
 		scanner.close();
-	}
-
-
-
-	private static String String(Optional<Product> itemAdd) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
-
-	private static Optional<Product> ofNullable(Optional<Product> fetchItem) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

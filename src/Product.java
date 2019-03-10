@@ -31,6 +31,9 @@ public class Product {
 	public void printInfo() {
 		System.out.println(this.getID()+". "+this.getName()
 		+":  "+this.getQuantity()+" at $"+this.getPrice());
+		if (this.getClearance()) {
+			System.out.print(" WAS $"+this.getTruePrice());
+		}
 	}
 	
 	//  Accessors
@@ -41,6 +44,7 @@ public class Product {
 		if (clearance == true) { return clearancePrice; }
 		else { return price; }
 	}
+	public double getTruePrice() { return price; }
 	public int getQuantity() { return quantity; }
 	
 	
