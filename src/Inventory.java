@@ -9,18 +9,37 @@ public class Inventory {
 	
 	//Accessors
 	public int size() { return list.size(); }
-	public Product get(int index) {
-		return list.get(index);
+	public Product get(int index) { return list.get(index);	}
+	public int getQuantity(String itemName) {
+		Product temp = fetchItem(itemName);
+		if (temp == null) { return -1; }
+		else { return temp.getQuantity(); }
+	}
+	public double getPrice(String itemName) {
+		Product temp = fetchItem(itemName);
+		if (temp == null) { return -1; }
+		else { return temp.getPrice(); }
 	}
 	
 	//Mutators
-	public void addItem(String name, double price, int quantity) {
-		list.add(new Product(name,this.size()+1,price,quantity));
+	public void newItem(String itemName, double price, int quantity) {
+		list.add(new Product(itemName,this.size()+1,price,quantity));
+	}
+	public void deleteItem(Product itemName) {
+		if (itemName == null) {
+			System.out.println("Error: item not found");
+		}
+		else {
+			list.remove(itemName);
+			for (int i = 0;i<list.size();i++) {
+				list.get(i).setID(i+1);
+			}
+		}
 	}
 	
-	public static Product fetchItem(String search) {
+	public Product fetchItem(String itemName) {
 		try {
-			int searchID = Integer.parseInt(search);
+			int searchID = Integer.parseInt(itemName);
 			for (Product temp : list) {
 				if (temp.getID() == searchID) {
 					return temp;
@@ -30,11 +49,65 @@ public class Inventory {
 		}
 		catch(Exception e) {
 			for (Product temp : list) {
-				if (temp.getName().equalsIgnoreCase(search)) {
+				if (temp.getName().equalsIgnoreCase(itemName)) {
 					return temp;
 				}
 			}
 			return null;
+		}
+	}
+		
+	public void addQuantity(Product inputItem, int addAmount) {
+		if (inputItem == null) { System.out.println("Item not found in inventory"); }
+		else { inputItem.setQuantity(inputItem.getQuantity()+addAmount); }
+	}
+	
+	
+	public void removeQuantity(Product inputItem, int removeAmount) {
+		if (inputItem == null) { System.out.println("Item not found in inventory"); }
+		else { inputItem.setQuantity(inputItem.getQuantity()-removeAmount); }
+	}
+	
+	public void setClearance(Product inputItem, double setPrice) {
+		if (inputItem.getTruePrice() <= setPrice) {
+			System.out.println("Clearance price exceeds the regular price.");
+		}
+		else { 
+			inputItem.setClearance(setPrice);
+			System.out.println(inputItem.getName()+" set to "+inputItem.getPrice());
+		}
+	}
+	
+	public void removeClearance(Product inputItem) {
+		inputItem.removeClearance();
+		System.out.println(inputItem.getName()+" removed from clearance. Regular price: "
+				+inputItem.getPrice());
+	}
+	
+	//Printing
+	public void printItem(String itemName) {
+		Product temp = this.fetchItem(itemName);
+		if (temp == null) { System.out.println("Item not found in inventory"); }
+		else { temp.printInfo(); }
+	}
+	
+	public void printAll(boolean clearanceOnly) {
+		boolean itemsInList = false;
+		for(int i = 0; i < this.size(); i++) {
+			if (clearanceOnly) {
+				if (list.get(i).getClearance()) {
+					list.get(i).printInfo();
+					itemsInList = true;
+				}
+			}
+			else {
+				this.get(i).printInfo();
+				itemsInList = true;
+			}
+		}
+		if (itemsInList == false) {
+			if (clearanceOnly) { System.out.println("No items are on clearance"); }
+			else { System.out.println("No items are in the inventory"); }
 		}
 	}
 	

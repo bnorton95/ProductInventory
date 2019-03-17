@@ -29,11 +29,12 @@ public class Product {
 		clearance = false;
 	}
 	public void printInfo() {
-		System.out.println(this.getID()+". "+this.getName()
+		System.out.print(this.getID()+". "+this.getName()
 		+":  "+this.getQuantity()+" at $"+this.getPrice());
 		if (this.getClearance()) {
-			System.out.print(" WAS $"+this.getTruePrice());
+			System.out.println(" (WAS $"+this.getTruePrice()+")");
 		}
+		else { System.out.println(); }
 	}
 	
 	//  Accessors
