@@ -28,14 +28,13 @@ public class Main {
 	
 	
 	/* This function will filter out bad user inputs.
-	 * Parameter DISPLAY is only used to print out the text of the required field
 	 * The function will return the specified user input without type errors.
 	 */
-	public static double getDoubleInput(String display, Scanner scanner) {
+	public static double getDoubleInput(String displayText, Scanner scanner) {
 		double input;
 		while (true) {
 			try {
-				System.out.println("Enter the "+display+" of the item: ");
+				System.out.println("Enter the "+displayText+" of the item: ");
 				input = scanner.nextDouble();
 				
 				if (input < 0) {
@@ -97,10 +96,8 @@ public class Main {
 		System.out.println("2. Create a blank inventory");
 		System.out.println("3. Create a sample inventory of 5 items");
 		
-		
 		int input = 0;
-		
-		while(true) {
+		while(true) { //Loop to select initial inventory loading
 			try {
 				input = scanner.nextInt(); 
 				if (input > 3 || input < 1) { 
@@ -111,18 +108,41 @@ public class Main {
 				else break;
 			}
 			catch(Exception e) {
-				System.out.println("Please enter a selection 1 or 2");
+				System.out.print("Please enter a selection 1 or 2");
 				scanner.next();
 				continue; 
 			}	
 		}
 		
 		boolean endProgram = false;
-		
-		
 		Inventory inv = new Inventory();
 		
-		if (input == 3) {
+		if (input == 1) { //Load from inventory .txt file
+			scanner.nextLine();
+			System.out.println("The grocery file will be searched for in the current directory");
+			System.out.print("Enter the name of the file to create the inventory from: ");
+			try {
+				String inputFile = scanner.nextLine();
+				
+				File file = new File(inputFile+".txt"); 
+				Scanner fileScan = new Scanner(file); 
+					  
+				while (fileScan.hasNext())  {
+					String name = fileScan.next();
+					int quantity = Integer.parseInt(fileScan.next());
+					double price = Double.parseDouble(fileScan.next());
+					
+					inv.newItem(name, price, quantity);
+				}
+				fileScan.close();
+				System.out.println("Successful loading of file "+inputFile+".txt");
+			}
+			catch(Exception e) {
+				System.out.println("Error loading the file");
+				System.exit(0);
+			}
+		} 
+		else if (input == 3) { //Create very basic inventory
 			inv.newItem("Grapes",0.5,30);
 			inv.newItem("Bread", 0.99, 20);
 			inv.newItem("Milk", 2.5, 15);
@@ -131,7 +151,8 @@ public class Main {
 		}
 		
 		
-		while (!endProgram) {			
+
+		while (!endProgram) {	//Main program loop
 			System.out.println("Enter a selection number: ");
 			System.out.println("1. Search inventory for item");
 			System.out.println("2. Add item quantity");
@@ -145,6 +166,7 @@ public class Main {
 			
 			try {
 				input = scanner.nextInt();
+				scanner.nextLine();
 				Product itemSearch;
 				
 				switch(input) {
@@ -154,7 +176,7 @@ public class Main {
 					break;
 				case 1: // Search inventory for item
 					System.out.println("There are "+inv.size()+" unique items in the inventory.");
-					System.out.println("Enter an item ID or name to search information about it.");
+					System.out.print("Enter an item ID or name to search information about it: ");
 					String search = scanner.next();
 					Product item = inv.fetchItem(search);
 					
@@ -168,7 +190,7 @@ public class Main {
 					continue;
 					
 				case 2: // Add item quantity
-					System.out.println("Enter an item name to add a quantity:");
+					System.out.print("Enter an item name to add a quantity:");
 					String add = scanner.next();
 					itemSearch = inv.fetchItem(add);
 					
@@ -189,7 +211,7 @@ public class Main {
 					pressEnter(scanner);
 					continue;
 				case 3: // Remove item quantity
-					System.out.println("Enter an item name to remove an amount:");
+					System.out.print("Enter an item name to remove an amount:");
 					String remove = scanner.next();
 					itemSearch = inv.fetchItem(remove);
 					
@@ -224,10 +246,49 @@ public class Main {
 						
 					break;
 				case 4: // Checkout item list from .txt file
+					System.out.println("The checkout file will be searched for in the current directory");
+					System.out.print("Enter the name of the file to checkout from: ");
+					try {
+						String inputFile = scanner.nextLine();
+						
+						File file = new File(inputFile+".txt"); 
+						Scanner fileScan = new Scanner(file); 
+						double totalPrice = 0.0;
+							  
+						while (fileScan.hasNext())  {
+							String name = fileScan.next();
+							Product fileItem = inv.fetchItem(name);
+							int quantity = Integer.parseInt(fileScan.next());
+							int available = inv.getItemQuantity(fileItem);
+							
+							if (available >= quantity) {
+								inv.removeQuantity(fileItem, quantity);
+								totalPrice += (inv.getPrice(fileItem))*quantity;
+							}
+							else {
+								inv.removeQuantity(fileItem,available);
+								totalPrice += (inv.getPrice(fileItem))*available;
+								System.out.println(quantity+" could not be removed. "+available+" removed instead.");
+								
+							}
+								
+							
+						}
+						Double tax = .07*totalPrice;
+						System.out.println("Checkout completed.");
+						System.out.println("Subtotal: "+String.format( "%.2f",totalPrice));
+						System.out.println("Tax: "+String.format( "%.2f",tax));
+						System.out.println("Total: "+String.format( "%.2f",totalPrice+tax));
+						fileScan.close();
+					}
+					catch(Exception e) {
+						System.out.println("Error loading the file");
+					}
 					
+					pressEnter(scanner);
 					break;
 				case 5: // Add/remove clearance price from item
-					System.out.println("Enter an item name to put on clearance:");
+					System.out.print("Enter an item name to put on clearance:");
 					String clear = scanner.next();
 					itemSearch = inv.fetchItem(clear);
 					
@@ -253,7 +314,6 @@ public class Main {
 					pressEnter(scanner);
 					continue;
 				case 8: //Save to text file
-					scanner.nextLine();
 					while (true) {
 						try {
 							System.out.println("Enter a filename to save to: ");

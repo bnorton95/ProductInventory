@@ -1,4 +1,6 @@
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +18,9 @@ public class Inventory {
 		if (temp == null) { return -1; }
 		else { return temp.getQuantity(); }
 	}
-	public double getPrice(String itemName) {
-		Product temp = fetchItem(itemName);
-		if (temp == null) { return -1; }
-		else { return temp.getPrice(); }
+	public double getPrice(Product fileItem) {
+		if (fileItem == null) { return -1; }
+		else { return fileItem.getPrice(); }
 	}
 	public int getItemQuantity(Product itemSearch) { return itemSearch.getQuantity(); }
 	public double getItemPrice(Product itemSearch) { return itemSearch.getPrice(); }
@@ -115,20 +116,15 @@ public class Inventory {
 		}
 	}
 	
-	public void writeToFile(String fileName) {
-		try {
-			PrintWriter writer = new PrintWriter(fileName+".txt", "UTF-8");
-			for(int i = 0;i < this.size(); i++) {
-				Product j = list.get(i);
-				writer.println(j.getName()+" "+
-						j.getQuantity()+" "+j.getPrice());
-			}
-			System.out.println("File created.");
-			writer.close();
+	public void writeToFile(String fileName) throws FileNotFoundException, UnsupportedEncodingException {
+		PrintWriter writer = new PrintWriter(fileName+".txt", "UTF-8");
+		for(int i = 0;i < this.size(); i++) {
+			Product j = list.get(i);
+			writer.println(j.getName()+" "+
+					j.getQuantity()+" "+j.getPrice());
 		}
-		catch(Exception e) {
-			System.out.println("Error in creating file name");
-		}
+		System.out.println("File created.");
+		writer.close();
 		
 	}
 	

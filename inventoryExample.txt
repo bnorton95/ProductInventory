@@ -1,0 +1,4 @@
+Grapes 5 0.5
+Bread 2 0.99
+Cereal 1 2.99
+Oranges 500 0.15

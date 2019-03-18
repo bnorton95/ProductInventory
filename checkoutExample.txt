@@ -1,0 +1,3 @@
+Grapes 5
+Bread 2
+Cereal 100
