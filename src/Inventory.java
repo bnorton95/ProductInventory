@@ -1,3 +1,4 @@
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,9 @@ public class Inventory {
 		if (temp == null) { return -1; }
 		else { return temp.getPrice(); }
 	}
+	public int getItemQuantity(Product itemSearch) { return itemSearch.getQuantity(); }
+	public double getItemPrice(Product itemSearch) { return itemSearch.getPrice(); }
+	public boolean getItemClearance(Product itemSearch) { return itemSearch.getClearance(); }
 	
 	//Mutators
 	public void newItem(String itemName, double price, int quantity) {
@@ -84,7 +88,7 @@ public class Inventory {
 				+inputItem.getPrice());
 	}
 	
-	//Printing
+	//Printing and writing
 	public void printItem(String itemName) {
 		Product temp = this.fetchItem(itemName);
 		if (temp == null) { System.out.println("Item not found in inventory"); }
@@ -109,6 +113,23 @@ public class Inventory {
 			if (clearanceOnly) { System.out.println("No items are on clearance"); }
 			else { System.out.println("No items are in the inventory"); }
 		}
+	}
+	
+	public void writeToFile(String fileName) {
+		try {
+			PrintWriter writer = new PrintWriter(fileName+".txt", "UTF-8");
+			for(int i = 0;i < this.size(); i++) {
+				Product j = list.get(i);
+				writer.println(j.getName()+" "+
+						j.getQuantity()+" "+j.getPrice());
+			}
+			System.out.println("File created.");
+			writer.close();
+		}
+		catch(Exception e) {
+			System.out.println("Error in creating file name");
+		}
+		
 	}
 	
 }

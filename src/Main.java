@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -69,14 +71,20 @@ public class Main {
 	}
 	
 	public static void pressEnter(Scanner scanner) {
-		if (scanner.hasNextLine()) {
-			scanner.nextLine();
-		}
 		System.out.print(" Press enter to continue.");
 		scanner.nextLine();
 	}
 	
-	
+	public static boolean isFilenameValid(String file) {
+		File f = new File(file);
+		try {
+		   f.getCanonicalPath();
+		   return true;
+		}
+		catch (IOException e) {
+		   return false;
+		}
+	}
 	
 	
 	public static void main(String[] args) {
@@ -87,14 +95,16 @@ public class Main {
 		System.out.println("Enter a selection number: ");
 		System.out.println("1. Load inventory from file");
 		System.out.println("2. Create a blank inventory");
+		System.out.println("3. Create a sample inventory of 5 items");
+		
 		
 		int input = 0;
 		
 		while(true) {
 			try {
 				input = scanner.nextInt(); 
-				if (input > 2 || input < 1) { 
-					System.out.println("Invalid selection. Please enter a selection 1 or 2");
+				if (input > 3 || input < 1) { 
+					System.out.println("Invalid selection. Please enter a selection 1 through 3");
 					scanner.next();
 					continue;
 				}
@@ -111,41 +121,26 @@ public class Main {
 		
 		
 		Inventory inv = new Inventory();
-		inv.newItem("Grapes",0.5,30);
-		inv.newItem("Bread", 0.99, 20);
-		inv.newItem("Milk", 2.5, 15);
-		inv.newItem("Chicken", 5.99, 5);
-		/*
-		//Search
-		System.out.println("Search for 'milk': ");
-		inv.printItem("milk");
 		
-		//Add
-		System.out.println("Adding to 'milk': ");
-		inv.addQuantity("milk", 3);
-		inv.printItem("milk");
+		if (input == 3) {
+			inv.newItem("Grapes",0.5,30);
+			inv.newItem("Bread", 0.99, 20);
+			inv.newItem("Milk", 2.5, 15);
+			inv.newItem("Chicken", 5.99, 5);
+			inv.newItem("Cereal", 2.99, 15);
+		}
 		
-		
-		
-		inv.setClearance("milk", 5.99);
-		
-		
-		//PrintClearance
-		inv.printAll(true);
-		
-		//PrintAll
-		inv.printAll(false);
-		*/
 		
 		while (!endProgram) {			
 			System.out.println("Enter a selection number: ");
 			System.out.println("1. Search inventory for item");
 			System.out.println("2. Add item quantity");
 			System.out.println("3. Remove item quantity");
-			System.out.println("4. Checkout item list from .txt file");
+			System.out.println("4. Checkout item list from file");
 			System.out.println("5. Add/remove clearance price from item");
 			System.out.println("6. Print list of items on sale");
 			System.out.println("7. Print full inventory");
+			System.out.println("8. Save inventory to file");
 			System.out.println("0. Exit program");
 			
 			try {
@@ -257,6 +252,25 @@ public class Main {
 					inv.printAll(false);
 					pressEnter(scanner);
 					continue;
+				case 8: //Save to text file
+					scanner.nextLine();
+					while (true) {
+						try {
+							System.out.println("Enter a filename to save to: ");
+							String name = scanner.nextLine();
+							if (isFilenameValid(name)) { inv.writeToFile(name); }
+							else {
+								System.out.print("Invalid file name. ");
+								continue;
+							}
+							break;
+						}
+						catch(Exception e) { continue; }
+					}
+					
+					System.out.print(" Press enter to continue.");
+					scanner.nextLine();
+					continue;
 				default:
 					System.out.println("Invalid input.");
 					continue;
@@ -269,42 +283,6 @@ public class Main {
 			
 			
 		}
-		
-		
-		
-
-		
-		/* if (input == 1) {
-		 * LOAD FROM EXCEL FILE HERE
-		 * }
-		 */
-		
-		/*
-		System.out.println("Enter the product name");
-		String name = scanner.nextLine();
-		
-		System.out.println("Enter a product ID");
-		int id = scanner.nextInt();
-		
-		System.out.println("Enter the quantity of the product: ");
-		int quantity = scanner.nextInt();
-		
-		System.out.println("Enter the price: ");
-		double price = scanner.nextDouble();
-		
-
-		Product product1 = new Product(name,id,price,quantity);
-		System.out.println("ID of "+name+" is: "+product1.getID());
-		*/
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		scanner.close();
 	}
